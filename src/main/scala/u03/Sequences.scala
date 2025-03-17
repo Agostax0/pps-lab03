@@ -2,6 +2,9 @@ package u03
 
 import u03.Optionals.Optional
 import u03.Optionals.Optional.*
+import u03.Sequences.Sequence
+
+import scala.annotation.tailrec
 
 object Sequences: // Essentially, generic linkedlists
 
@@ -33,23 +36,30 @@ object Sequences: // Essentially, generic linkedlists
      * E.g., [10, 20, 30], 0 => [10, 20, 30]
      * E.g., [], 2 => []
      */
-    def skip[A](s: Sequence[A])(n: Int): Sequence[A] = ???
-
+    def skip[A](s: Sequence[A])(n: Int): Sequence[A] = s match
+      case Cons(h,t) if n > 0 => skip(t)(n-1)
+      case Cons(h,t) if n == 0 => Cons(h,t)
+      case _ => Nil()
     /*
      * Zip two sequences
      * E.g., [10, 20, 30], [40, 50] => [(10, 40), (20, 50)]
      * E.g., [10], [] => []
      * E.g., [], [] => []
      */
-    def zip[A, B](first: Sequence[A], second: Sequence[B]): Sequence[(A, B)] = ???
-
+    def zip[A, B](first: Sequence[A], second: Sequence[B]): Sequence[(A, B)] = (first, second) match
+      case (Cons(h1, t1), Cons (h2, t2)) => Cons( Tuple2(h1, h2) , zip( t1, t2) )
+      case _ => Nil()
     /*
      * Concatenate two sequences
      * E.g., [10, 20, 30], [40, 50] => [10, 20, 30, 40, 50]
      * E.g., [10], [] => [10]
      * E.g., [], [] => []
      */
-    def concat[A](s1: Sequence[A], s2: Sequence[A]): Sequence[A] = ???
+    def concat[A](s1: Sequence[A], s2: Sequence[A]): Sequence[A] = s1 match
+      case Cons(h,t) => Cons(h, concat(t , s2))
+      case _ => s2 match
+        case Cons(h,t) => Cons(h, concat(Nil(), t))
+        case _ => Nil()
 
     /*
      * Reverse the sequence

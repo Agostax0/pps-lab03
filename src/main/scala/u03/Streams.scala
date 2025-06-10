@@ -1,5 +1,5 @@
 package u03
-
+import u03.Sequences.Sequence.Cons
 object Streams extends App:
 
   import Sequences.*
@@ -48,6 +48,25 @@ object Streams extends App:
       case (Cons(h1, t1), _) => cons(h1(), interleave(t1(), empty()))
       case (_, Cons(h2, t2)) => cons(h2(), interleave(empty(), t2()))
       case _ => empty()
+
+    def fill[A](n: Int)(k: A): Stream[A] = n match
+      case n if n > 0 => cons(k, fill(n-1)(k))
+      case _ => Empty()
+
+    def fibonacci(): Stream[Int] =
+      def _fibonacci(n0: Int)(n1: Int): Stream[Int] =
+        cons(n0, _fibonacci(n1)(n0+n1))
+
+      _fibonacci(0)(1)
+
+
+    def cycle[A](lst : Sequence[A]): Stream[A] =
+      def _cycle[A](originalList: Sequence[A])(it: Sequence[A]): Stream[A] = it match
+        case Sequence.Cons(h, t) => cons(h, _cycle(originalList)(it) )
+        case _ => _cycle(originalList)(originalList)
+      _cycle(lst)(lst)
+
+
   end Stream
 end Streams
 
